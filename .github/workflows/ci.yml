@@ -1,0 +1,70 @@
+name: CI - Cross-platform CMake Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Configure (Windows uses multi-config generator; pass -A x64)
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake -S . -B build -A x64 -DUSE_FETCHCONTENT_HTTPLIB=ON
+
+      # Configure (Unix-like single-config: set Release here)
+      - name: Configure CMake (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DUSE_FETCHCONTENT_HTTPLIB=ON
+
+      # Build
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake --build build --config Release -- /m
+
+      - name: Build (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cmake --build build -- -j 2
+
+      # Upload build artifacts (binary + default runtime files)
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pawsome_server-${{ runner.os }}
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            build/**/Release/pawsome_server.exe
+            build/**/pawsome_server
+            build/**/server.ini
+            build/**/text.txt
+
+      # Upload CMake logs on failure to help diagnose issues
+      - name: Upload CMake logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cmake-logs-${{ runner.os }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            build/**/CMakeFiles/CMakeOutput.log
+            build/**/CMakeFiles/CMakeError.log
+            build/CMakeCache.txt

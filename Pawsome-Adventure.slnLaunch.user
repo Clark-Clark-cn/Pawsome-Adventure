@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "run",
+    "Projects": [
+      {
+        "Path": "server\\server.vcxproj",
+        "Action": "Start",
+        "DebugTarget": "本地 Windows 调试器"
+      }
+    ]
+  }
+]
