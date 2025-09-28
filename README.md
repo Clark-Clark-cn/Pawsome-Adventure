@@ -2,6 +2,10 @@
 
 A multiplayer (including team mode) text racing game, featuring a cross-platform HTTP server (C++17 + cpp-httplib) and a Windows client (based on EasyX, not yet included in CMake). The server handles text distribution, heartbeat synchronization, and progress aggregation; the client handles rendering and interaction.
 
+## **start game**
+- Run the server
+- Run the client (at least 2 clients or 2 groups of clients)
+
 ## Features
 
 - Cross-platform server: Windows / Linux / macOS (CMake build)
