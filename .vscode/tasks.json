@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Preview README_cn outline",
+			"type": "shell",
+			"command": "cmd /c echo Preparing README_cn.md skeleton...",
+			"isBackground": false
+		},
+		{
+			"label": "Generate README_cn",
+			"type": "shell",
+			"command": "cmd /c echo Generating README content...",
+			"isBackground": false
+		}
+	]
+}
